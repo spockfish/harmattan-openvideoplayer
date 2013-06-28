@@ -19,6 +19,7 @@ Description: FOSS alernative to the stock media player
  * Choice of thumbnails sizes to make browsing easier.\n\n
  * Sorting of videos by date or title (ascending or descending).\n\n
  * Adding of multiple videos to the playback queue.\n\n
+ * Support for viewing, creating, editing and deleting playlists.\n\n
  * Additional playback controls.\n\n
  * Support for subtitles (SRT format).\n\n
  * Option to continue video playback when minimised.\n\n

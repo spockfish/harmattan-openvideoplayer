@@ -1,5 +1,6 @@
-openvideoplayer (0.0.2) unstable; urgency=low
+openvideoplayer (0.0.3) unstable; urgency=low
 
-  * Added support for subtitles (SRT format only).
+  * Added support for playlists.
+  * Fixed errors in subtitles support.
 
- -- Stuart Howarth <showarth@cutetubte.co.uk>  Wed, 02 Nov 2011 15:12:41 +0000
+ -- Stuart Howarth <showarth@cutetubte.co.uk>  Fri, 04 Nov 2011 07:12:41 +0000

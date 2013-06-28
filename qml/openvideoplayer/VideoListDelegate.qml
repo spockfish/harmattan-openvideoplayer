@@ -24,18 +24,18 @@ Item {
             anchors { top: thumb.top; right: thumb.right; margins: 10 }
             source: "image://theme/meegotouch-video-duration-background"
             smooth: true
-        }
 
-        Label {
-            id: durationText
+            Label {
+                id: durationText
 
-            anchors.centerIn: durationLabel
-            font.pixelSize: _SMALL_FONT_SIZE
-            color: resumePosition === 0 ? "white" : Settings.activeColor
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-            smooth: true
-            text: DT.getDuration(duration - resumePosition)
+                anchors.centerIn: durationLabel
+                font.pixelSize: _SMALL_FONT_SIZE
+                color: resumePosition === 0 ? "white" : Settings.activeColor
+                horizontalAlignment: Text.AlignHCenter
+                verticalAlignment: Text.AlignVCenter
+                smooth: true
+                text: DT.getDuration(duration - resumePosition)
+            }
         }
     }
 
@@ -47,7 +47,8 @@ Item {
         font.bold: true
         elide: Text.ElideRight
         color: (videoPlaybackPage.currentVideo.title) && (videoPlaybackPage.currentVideo.title == title) ? Settings.activeColor : _TEXT_COLOR
-        text: title
+        text: !title ? fileName.slice(0, fileName.lastIndexOf(".")) : title
+        clip: true
     }
 
     MouseArea {

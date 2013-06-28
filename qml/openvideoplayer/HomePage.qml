@@ -27,6 +27,16 @@ Page {
         appWindow.pageStack.push(detailsPage);
     }
 
+    function showPlaylists() {
+        appWindow.pageStack.push(Qt.resolvedUrl("PlaylistsPage.qml"));
+    }
+
+    function showAddToPlaylistDialog(url) {
+        var addToPlaylistDialog = ObjectCreator.createObject(Qt.resolvedUrl("AddToPlaylistDialog.qml"), appWindow.pageStack);
+        addToPlaylistDialog.fileUrl = url;
+        addToPlaylistDialog.open();
+    }
+
     orientationLock: appWindow.pageStack.currentPage == videoPlaybackPage ? PageOrientation.Automatic
                                                                           : (Settings.screenOrientation == "landscape")
                                                                             ? PageOrientation.LockLandscape
@@ -89,6 +99,11 @@ Page {
             }
 
             MenuItem {
+                text: qsTr("Playlists")
+                onClicked: showPlaylists()
+            }
+
+            MenuItem {
                 text: qsTr("Settings")
                 onClicked: showSettings()
             }
@@ -106,13 +121,18 @@ Page {
         MenuLayout {
 
             MenuItem {
+                text: qsTr("View details")
+                onClicked: showVideoDetails(videoListModel.get(videoList.selectedIndex).itemId)
+            }
+
+            MenuItem {
                 text: qsTr("Add to playback queue")
                 onClicked: appendPlaybackQueue([ObjectCreator.cloneVideoObject(videoListModel.get(videoList.selectedIndex))])
             }
 
             MenuItem {
-                text: qsTr("View details")
-                onClicked: showVideoDetails(videoListModel.get(videoList.selectedIndex).itemId)
+                text: qsTr("Add to playlist")
+                onClicked: showAddToPlaylistDialog(videoListModel.get(videoList.selectedIndex).url)
             }
 
             MenuItem {

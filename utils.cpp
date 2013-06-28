@@ -1,7 +1,13 @@
 #include "utils.h"
 #include <QFile>
+#include <QDir>
 #include <QStringList>
 #include <QDebug>
+#include <QByteArray>
+#include <QRegExp>
+
+#define PLAYLIST_PATH "/home/user/MyDocs/OVP/Playlists/"
+#define ILLEGAL_CHARS "[\"@&~=\\/:?#!|<>*^]"
 
 Utils::Utils(QObject *parent) :
     QObject(parent) {
@@ -19,44 +25,125 @@ void Utils::deleteVideo(const QString &path) {
     emit alert(message);
 }
 
-QVariantList Utils::getSubtitles(const QString &filePath) {
-    QVariantList subtitles;
-    QFile aFile(filePath.left(filePath.lastIndexOf(".")) + ".srt");
+QVariantList Utils::getPlaylistVideos(const QUrl &url) const {
+    QString filePath(url.toString());
+    QByteArray path(filePath.left(filePath.lastIndexOf("/") + 1).toAscii());
+    QVariantList videos;
+    QFile aFile(url.toLocalFile());
     if (aFile.open(QIODevice::ReadOnly)) {
-        QString contents(aFile.readAll().replace("\r", ""));
+        QByteArray contents(aFile.readAll().replace("\r", ""));
+        QList<QByteArray> lines(contents.split('\n'));
         aFile.close();
-        QStringList lines(contents.split("\n", QString::SkipEmptyParts));
-        while (!lines.isEmpty()) {
-            lines.takeFirst();
-            QVariantMap sub;
-            QStringList times(lines.takeFirst().split("-->"));
-            if (times.size() == 2) {
-                sub.insert("start", getSubTime(times.takeFirst().trimmed()));
-                sub.insert("end", getSubTime(times.takeFirst().trimmed()));
-                sub.insert("text", lines.takeFirst());
-                subtitles.prepend(sub);
+        foreach (QByteArray line, lines) {
+            if (!((line.startsWith("#")) || (line.isEmpty()))) {
+                QVariantMap video;
+                if (!line.startsWith("file:///")) {
+                    video.insert("url", QString(path + line.toPercentEncoding(QByteArray(",/:()"), QByteArray(" "))));
+                }
+                else {
+                    video.insert("url", QString(line.toPercentEncoding(QByteArray(",/:()"), QByteArray(" "))));
+                }
+                QString fileName(line.split('/').last());
+                QString title(fileName.left(fileName.lastIndexOf(".")));
+                video.insert("fileName", fileName);
+                video.insert("title", title);
+                video.insert("name", title);
+                video.insert("duration", 0);
+                videos.append(video);
             }
         }
     }
-    return subtitles;
+    return videos;
 }
 
-int Utils::getSubTime(const QString &aTime) {
-    QStringList hms(aTime.split(":"));
-    int subTime = 0;
-    int hours = 0;
-    int mins = 0;
-    int secs = 0;
-    int msecs = 0;
-    if (hms.size() == 3) {
-        hours = hms.takeFirst().toInt() * 3600000;
-        mins = hms.takeFirst().toInt() * 60000;
-        QStringList sms(hms.takeFirst().split(","));
-        if (sms.size() == 2) {
-            secs = sms.takeFirst().toInt() * 1000;
-            msecs = sms.takeFirst().toInt();
-        }
-        subTime = hours + mins + secs + msecs;
+bool Utils::createPlaylist(QString title) {
+    QDir path(PLAYLIST_PATH);
+    if (!path.exists()) {
+        path.mkpath(PLAYLIST_PATH);
     }
-    return subTime;
+    bool created = false;
+    QString message;
+    QFile aFile(PLAYLIST_PATH + title.replace(QRegExp(ILLEGAL_CHARS), "_") + ".m3u");
+    if (aFile.exists()) {
+        message = tr("Playlist already exists");
+    }
+    else {
+        created = aFile.open(QIODevice::WriteOnly);
+        if (created) {
+            aFile.write("");
+            aFile.close();
+            message = tr("New playlist created");
+            emit playlistCreated();
+        }
+        else {
+            message = tr("Playlist could not be created");
+        }
+    }
+    emit alert(message);
+    return created;
+}
+
+void Utils::deletePlaylist(const QUrl &url) {
+    QString message;
+    if (QFile::remove(url.toLocalFile())) {
+        message = tr("Playlist deleted successfully");
+        emit playlistDeleted();
+    }
+    else {
+        message = tr("Playlist could not be deleted");
+    }
+    emit alert(message);
+}
+
+void Utils::addVideoToPlaylist(const QUrl &videoUrl, const QUrl &playlistUrl) {
+    QString message;
+    QFile aFile(playlistUrl.toLocalFile());
+    if (aFile.open(QIODevice::Append)) {
+        aFile.write("\n" + videoUrl.toString().toAscii());
+        aFile.close();
+        message = tr("Video added to playlist");
+        emit addedToPlaylist();
+    }
+    else {
+        message = tr("Video could not be added to playlist");
+    }
+    emit alert(message);
+}
+
+void Utils::deleteVideoFromPlaylist(int pos, const QString &fileName, const QUrl &playlistUrl) {
+    QString message;
+    QFile aFile(playlistUrl.toLocalFile());
+    if (aFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QString contents(aFile.readAll().replace("\r", ""));
+        aFile.close();
+        QStringList lines(contents.split("\n", QString::SkipEmptyParts));
+        QString line;
+        int lineNumber = 0;
+        int videoNumber = 0;
+        bool found = false;
+        while ((!found) && (lineNumber < lines.size())) {
+            line = lines.at(lineNumber);
+            if (!line.startsWith("#")) {
+                if ((videoNumber == pos) && (line.endsWith(fileName))) {
+                    lines.removeAt(lineNumber);
+                    found = true;
+                }
+                videoNumber++;
+            }
+            lineNumber++;
+        }
+        QByteArray data(lines.join("\n").toAscii());
+        if ((aFile.open(QIODevice::WriteOnly | QIODevice::Text)) && (aFile.write(data) > 0)) {
+            aFile.close();
+            message = tr("Video deleted from playlist");
+            emit deletedFromPlaylist();
+        }
+        else {
+            message = tr("Video could not be added to playlist");
+        }
+    }
+    else {
+        message = tr("Video could not be added to playlist");
+    }
+    emit alert(message);
 }

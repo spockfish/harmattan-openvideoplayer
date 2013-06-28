@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by Qt Creator 2.3.0, 2011-11-02T15:39:57. -->
+<!-- Written by Qt Creator 2.3.0, 2011-11-04T07:37:41. -->
 <qtcreator>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
@@ -509,19 +509,23 @@
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">MaemoUploadAndInstallDpkgPackageStep</value>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedFiles">
        <value type="QString">/home/stuart/Harmattan/openvideoplayer-build-harmattan-Harmattan_Platform_API___Qt_SDK__Release/openvideoplayer_0.0.1_armel.deb</value>
+       <value type="QString">/home/stuart/Harmattan/openvideoplayer-build-harmattan-Harmattan_Platform_API___Qt_SDK__Release/openvideoplayer_0.0.3_armel.deb</value>
        <value type="QString">/home/stuart/Harmattan/openvideoplayer-build-harmattan-Harmattan_Platform_API___Qt_SDK__Release/openvideoplayer_0.0.2_armel.deb</value>
       </valuelist>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedHosts">
+       <value type="QString">192.168.2.15</value>
        <value type="QString">192.168.2.15</value>
        <value type="QString">192.168.2.15</value>
       </valuelist>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedRemotePaths">
        <value type="QString"></value>
        <value type="QString"></value>
+       <value type="QString"></value>
       </valuelist>
       <valuelist type="QVariantList" key="Qt4ProjectManager.MaemoRunConfiguration.LastDeployedTimes">
        <value type="QDateTime">2011-11-02T14:54:26</value>
-       <value type="QDateTime">2011-11-02T15:37:36</value>
+       <value type="QDateTime">2011-11-04T07:17:22</value>
+       <value type="QDateTime">2011-11-03T01:06:32</value>
       </valuelist>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">3</value>

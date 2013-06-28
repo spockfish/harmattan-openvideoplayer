@@ -34,7 +34,7 @@ Item {
         anchors { right: parent.right; rightMargin: 10; verticalCenter: parent.verticalCenter }
         verticalAlignment: Text.AlignVCenter
         color: titleLabel.color
-        text: DT.getDuration(duration)
+        text: duration === 0 ? "" : DT.getDuration(duration)
     }
 
     MouseArea {

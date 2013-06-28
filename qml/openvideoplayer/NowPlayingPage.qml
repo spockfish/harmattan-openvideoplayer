@@ -34,7 +34,12 @@ Page {
     }
 
     function startPlayback() {
-        video.item = currentVideo.itemId;
+        if (currentVideo.itemId) {
+            video.item = currentVideo.itemId;
+        }
+        else {
+            videoModel.getVideo(currentVideo.url);
+        }
         if (Settings.enableSubtitles) {
             getSubtitles();
         }
@@ -86,13 +91,16 @@ Page {
 
     function showCurrentVideoDetails() {
         var detailsPage = ObjectCreator.createObject(Qt.resolvedUrl("VideoDetailsPage.qml"), appWindow.pageStack);
-        detailsPage.id = currentVideo.itemId;
+        detailsPage.id = video.item;
         detailsPage.allowToPlay = false;
         appWindow.pageStack.push(detailsPage);
     }
 
     function getSubtitles() {
-        var subtitles = Utils.getSubtitles(currentVideo.filePath);
+        subsGetter.sendMessage(currentVideo.url);
+    }
+
+    function setSubtitles(subtitles) {
         if (subtitles.length > 0) {
             var cv = currentVideo;
             cv["subtitles"] = subtitles;
@@ -101,22 +109,7 @@ Page {
     }
 
     function checkSubtitles() {
-        if (currentVideo.subtitles) {
-            var found = false;
-            var i = 0;
-            var sub;
-            while ((!found) && (i < currentVideo.subtitles.length)) {
-                sub = currentVideo.subtitles[i];
-                if ((videoPlayer.position >= sub.start) && (videoPlayer.position <= sub.end)) {
-                    subtitlesText.text = sub.text;
-                    found = true;
-                }
-                i++;
-            }
-            if (!found) {
-                subtitlesText.text = "";
-            }
-        }
+        subsChecker.sendMessage({"position": videoPlayer.position, "subtitles": currentVideo.subtitles})
     }
 
     orientationLock: appWindow.pageStack.currentPage == videoPlaybackPage ? PageOrientation.Automatic
@@ -125,6 +118,20 @@ Page {
                                                                             : (Settings.screenOrientation == "portrait")
                                                                               ? PageOrientation.LockPortrait
                                                                               : PageOrientation.Automatic
+
+    WorkerScript {
+        id: subsGetter
+
+        source: "scripts/getsubtitles.js"
+        onMessage: setSubtitles(messageObject)
+    }
+
+    WorkerScript {
+        id: subsChecker
+
+        source: "scripts/checksubtitles.js"
+        onMessage: subtitlesText.text = messageObject
+    }
 
 
     SelectionDialog {
@@ -189,7 +196,7 @@ Page {
                     anchors { top: parent.bottom; horizontalCenter: parent.right }
                     font.pixelSize: _SMALL_FONT_SIZE
                     color: !appWindow.inPortrait ? "white" : _TEXT_COLOR
-                    text: (appWindow.videoPlaying) && ((appWindow.inPortrait) || (toolBar.show)) ? DT.getDuration(currentVideo.duration) : "0:00"
+                    text: (appWindow.videoPlaying) && ((appWindow.inPortrait) || (toolBar.show)) ? DT.getTime(videoPlayer.duration) : "0:00"
                 }
 
                 SeekBubble {
@@ -307,10 +314,10 @@ Page {
     Timer {
         id: archivePlaybackTimer
 
-        /* Prevents segfault when switching between archive videos */
+        /* Prevents segfault when switching between videos */
 
         interval: 1000
-        onTriggered: videoPlayer.setVideo(currentVideo.filePath)
+        onTriggered: videoPlayer.setVideo(currentVideo.url)
     }
 
     Video {
@@ -329,7 +336,7 @@ Page {
         fillMode: Video.PreserveAspectFit
         anchors { centerIn: parent; verticalCenterOffset: appWindow.inPortrait ? -130 : 0 }
         paused: ((platformWindow.viewMode == WindowState.Thumbnail) && (Settings.pauseWhenMinimized) && (videoPlayer.playing)) || ((!Settings.playInBackground) && (appWindow.pageStack.currentPage != videoPlaybackPage) && (videoPlayer.playing)) || (videoPlayer.setToPaused)
-        onPositionChanged: checkSubtitles()
+        onPositionChanged: if ((Settings.enableSubtitles) && (currentVideo.subtitles)) checkSubtitles();
         onError: {
             if (error != Video.NoError) {
                 if (error == Video.NetworkError) {
@@ -442,8 +449,24 @@ Page {
             var mb = Math.abs(video.metaData.fileSize / 1000000).toString();
             return mb.slice(0, mb.indexOf(".") + 2) + "MB";
         }
-
         properties: ["title", "duration", "fileSize", "fileExtension", "playCount", "lastModified", "url", "resumePosition"]
+    }
+
+    DocumentGalleryModel {
+        id: videoModel
+
+        function getVideo(url) {
+            videoFilter.value = url;
+        }
+
+        rootType: DocumentGallery.Video
+        filter: GalleryEqualsFilter {
+            id: videoFilter
+
+            property: "url"
+            value: ""
+        }
+        onStatusChanged: if ((videoModel.status == DocumentGalleryModel.Finished) && (videoModel.count == 1)) video.item = videoModel.get(0).itemId;
     }
 
     Flickable {

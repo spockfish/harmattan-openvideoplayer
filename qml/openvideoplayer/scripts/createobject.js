@@ -28,7 +28,7 @@ function cloneVideoObject(video, itemId) {
     }
     archiveItem["title"] = video.title;
     archiveItem["name"] = video.title;
-    archiveItem["filePath"] = video.filePath;
+    archiveItem["url"] = video.url;
     archiveItem["duration"] = video.duration;
     return archiveItem;
 }
