@@ -5,6 +5,8 @@ import "scripts/dateandtime.js" as DT
 Item {
     id: delegate
 
+    property bool useMarqueeText
+
     signal clicked
     signal pressAndHold
 
@@ -39,16 +41,11 @@ Item {
         }
     }
 
-    Label {
-        id: titleText
-
+    Marquee {
         anchors { bottom: parent.bottom; left: parent.left; right: parent.right; margins: 10 }
-        verticalAlignment: Text.AlignVCenter
-        font.bold: true
-        elide: Text.ElideRight
-        color: (videoPlaybackPage.currentVideo.title) && (videoPlaybackPage.currentVideo.title == title) ? Settings.activeColor : _TEXT_COLOR
-        text: !title ? fileName.slice(0, fileName.lastIndexOf(".")) : title
-        clip: true
+        textColor: (videoPlaybackPage.currentVideo.fileName) && (videoPlaybackPage.currentVideo.fileName == fileName) ? Settings.activeColor : _TEXT_COLOR
+        text: fileName.slice(0, fileName.lastIndexOf("."))
+        enableScrolling: useMarqueeText
     }
 
     MouseArea {

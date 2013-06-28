@@ -63,12 +63,12 @@ Page {
         }
     }
 
-    orientationLock: appWindow.pageStack.currentPage == videoPlaybackPage ? PageOrientation.Automatic
-                                                                          : (Settings.screenOrientation == "landscape")
-                                                                            ? PageOrientation.LockLandscape
-                                                                            : (Settings.screenOrientation == "portrait")
-                                                                              ? PageOrientation.LockPortrait
-                                                                              : PageOrientation.Automatic
+    orientationLock: (appWindow.pageStack.currentPage == videoPlaybackPage) && (!Settings.lockVideosToLandscape) ? PageOrientation.Automatic
+                     : (Settings.screenOrientation == "landscape") || ((appWindow.pageStack.currentPage == videoPlaybackPage) && (Settings.lockVideosToLandscape))
+                     ? PageOrientation.LockLandscape
+                     : (Settings.screenOrientation == "portrait")
+                       ? PageOrientation.LockPortrait
+                       : PageOrientation.Automatic
 
     ListView {
         id: videoList

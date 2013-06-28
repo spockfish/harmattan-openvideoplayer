@@ -31,8 +31,8 @@ Page {
         tabGroup.currentTab = queuePage;
     }
 
-    orientationLock: appWindow.pageStack.currentPage == videoPlaybackPage ? PageOrientation.Automatic
-                     : (Settings.screenOrientation == "landscape")
+    orientationLock: (appWindow.pageStack.currentPage == videoPlaybackPage) && (!Settings.lockVideosToLandscape) ? PageOrientation.Automatic
+                     : (Settings.screenOrientation == "landscape") || ((appWindow.pageStack.currentPage == videoPlaybackPage) && (Settings.lockVideosToLandscape))
                      ? PageOrientation.LockLandscape
                      : (Settings.screenOrientation == "portrait")
                        ? PageOrientation.LockPortrait

@@ -19,17 +19,19 @@ function cloneObject(objectToClone) {
 }
 
 function cloneVideoObject(video, itemId) {
-    var archiveItem = {};
+    var videoItem = {};
     if (itemId) {
-        archiveItem["itemId"] = itemId;
+        videoItem["itemId"] = itemId;
     }
     else {
-        archiveItem["itemId"] = video.itemId;
+        videoItem["itemId"] = video.itemId;
     }
-    archiveItem["title"] = video.title;
-    archiveItem["name"] = video.title;
-    archiveItem["url"] = video.url;
-    archiveItem["duration"] = video.duration;
-    return archiveItem;
+    videoItem["title"] = video.title;
+    videoItem["fileName"] = video.fileName;
+    videoItem["name"] = video.title;
+    videoItem["url"] = video.url;
+    videoItem["filePath"] = video.filePath;
+    videoItem["duration"] = video.duration;
+    return videoItem;
 }
 

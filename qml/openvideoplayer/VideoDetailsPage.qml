@@ -8,6 +8,7 @@ Page {
     id: root
 
     property alias id: video.item
+    property alias filePath: videoFilter.value
     property bool allowToPlay: true
 
     orientationLock: appWindow.pageStack.currentPage == videoPlaybackPage ? PageOrientation.Automatic
@@ -52,7 +53,20 @@ Page {
             return mb.slice(0, mb.indexOf(".") + 2) + "MB";
         }
 
-        properties: ["title", "duration", "fileSize", "fileExtension", "playCount", "lastModified", "url", "filePath"]
+        properties: ["title", "fileName", "duration", "fileSize", "fileExtension", "playCount", "lastModified", "url", "filePath"]
+    }
+
+    DocumentGalleryModel {
+        id: videoModel
+
+        rootType: DocumentGallery.Video
+        filter: GalleryEqualsFilter {
+            id: videoFilter
+
+            property: "filePath"
+            value: ""
+        }
+        onStatusChanged: if ((videoModel.status == DocumentGalleryModel.Finished) && (videoModel.count > 0)) video.item = videoModel.get(0).itemId;
     }
 
 
@@ -99,7 +113,7 @@ Page {
                 font.pixelSize: 32
                 color: _TEXT_COLOR
                 wrapMode: Text.WordWrap
-                text: video.available ? video.metaData.title : ""
+                text: video.available ? video.metaData.fileName.slice(0, video.metaData.fileName.lastIndexOf(".")) : ""
             }
 
             Column {

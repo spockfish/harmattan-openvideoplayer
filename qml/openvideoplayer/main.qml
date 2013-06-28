@@ -33,7 +33,7 @@ MyPageStackWindow {
         messages.displayMessage(messages._ADDED_TO_PLAYBACK_QUEUE);
     }
 
-    onVideoPlayingChanged: appWindow.videoPlaying ? screenSaver.setScreenSaverDelayed(true) : screenSaver.setScreenSaverDelayed(false)
+    onVideoPlayingChanged:  appWindow.videoPlaying? screenSaver.setScreenSaverDelayed(true) : screenSaver.setScreenSaverDelayed(false)
     initialPage: homePage
     showStatusBar: false
     showToolBar: (!appWindow.videoPlaying) || (appWindow.inPortrait)

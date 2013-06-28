@@ -8,6 +8,7 @@
 
 #define PLAYLIST_PATH "/home/user/MyDocs/OVP/Playlists/"
 #define ILLEGAL_CHARS "[\"@&~=\\/:?#!|<>*^]"
+#define EXCLUDED_CHARS ",/:()'"
 
 Utils::Utils(QObject *parent) :
     QObject(parent) {
@@ -27,7 +28,7 @@ void Utils::deleteVideo(const QString &path) {
 
 QVariantList Utils::getPlaylistVideos(const QUrl &url) const {
     QString filePath(url.toString());
-    QByteArray path(filePath.left(filePath.lastIndexOf("/") + 1).toAscii());
+    QByteArray path(filePath.left(filePath.lastIndexOf("/") + 1).right(filePath.size() - 7).toAscii());
     QVariantList videos;
     QFile aFile(url.toLocalFile());
     if (aFile.open(QIODevice::ReadOnly)) {
@@ -38,10 +39,12 @@ QVariantList Utils::getPlaylistVideos(const QUrl &url) const {
             if (!((line.startsWith("#")) || (line.isEmpty()))) {
                 QVariantMap video;
                 if (!line.startsWith("file:///")) {
-                    video.insert("url", QString(path + line.toPercentEncoding(QByteArray(",/:()"), QByteArray(" "))));
+                    video.insert("url", QString("file:///" + path + line.toPercentEncoding(QByteArray(EXCLUDED_CHARS), QByteArray(" "))));
+                    video.insert("filePath", path + line);
                 }
                 else {
-                    video.insert("url", QString(line.toPercentEncoding(QByteArray(",/:()"), QByteArray(" "))));
+                    video.insert("url", QString(line.toPercentEncoding(QByteArray(EXCLUDED_CHARS), QByteArray(" "))));
+                    video.insert("filePath", QString(line.right(line.size() - 7)));
                 }
                 QString fileName(line.split('/').last());
                 QString title(fileName.left(fileName.lastIndexOf(".")));

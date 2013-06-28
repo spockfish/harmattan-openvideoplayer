@@ -101,6 +101,24 @@ Page {
                     }
                 }
             }
+
+            Row {
+                x: 10
+                spacing: parent.width - (children[0].width + children[1].width + 20)
+
+                Label {
+                    height: 30
+                    color: _TEXT_COLOR
+                    verticalAlignment: Text.AlignBottom
+                    font.bold: true
+                    text: qsTr("Enable marquee text")
+                }
+
+                MySwitch {
+                    Component.onCompleted: checked = Settings.enableMarqueeText
+                    onCheckedChanged: Settings.enableMarqueeText = checked
+                }
+            }
         }
     }
 

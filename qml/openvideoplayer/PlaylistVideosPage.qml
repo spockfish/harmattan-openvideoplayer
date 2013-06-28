@@ -31,6 +31,12 @@ Page {
         Utils.deleteVideoFromPlaylist(index, video.fileName, playlistUrl)
     }
 
+    function showVideoDetails(filePath) {
+        var detailsPage = ObjectCreator.createObject(Qt.resolvedUrl("VideoDetailsPage.qml"), appWindow.pageStack);
+        detailsPage.filePath = filePath;
+        appWindow.pageStack.push(detailsPage);
+    }
+
     orientationLock: appWindow.pageStack.currentPage == videoPlaybackPage ? PageOrientation.Automatic
                                                                           : (Settings.screenOrientation == "landscape")
                                                                             ? PageOrientation.LockLandscape
@@ -70,7 +76,7 @@ Page {
 
             MenuItem {
                 text: qsTr("View details")
-                onClicked: showVideoDetails(videoListModel.get(videoList.selectedIndex).itemId)
+                onClicked: showVideoDetails(videoListModel.get(videoList.selectedIndex).filePath)
             }
 
             MenuItem {
@@ -190,6 +196,7 @@ Page {
 
                         width: videoList.cellWidth
                         height: videoList.cellHeight
+                        useMarqueeText: appWindow.pageStack.currentPage == root
                         onClicked: playVideos([ObjectCreator.cloneVideoObject(videoListModel.get(index))])
                         onPressAndHold: {
                             videoList.selectedIndex = index;

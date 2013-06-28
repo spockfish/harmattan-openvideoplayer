@@ -37,7 +37,7 @@ MenuItem {
                 id: title
 
                 font.bold: true
-                color: _TEXT_COLOR //TODO: Change for PR1.1
+                color: "black" //_TEXT_COLOR //TODO: Change for PR1.1
                 verticalAlignment: Text.AlignVCenter
             }
 

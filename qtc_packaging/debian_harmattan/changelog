@@ -1,6 +1,8 @@
-openvideoplayer (0.0.3) unstable; urgency=low
+openvideoplayer (0.0.4) unstable; urgency=low
 
-  * Added support for playlists.
-  * Fixed errors in subtitles support.
+  * Added option to lock to landscape orientation when viewing videos.
+  * Added optional marquee text in video delegates.
+  * Now using filenames rather than embedded titles for videos.
+  * Fixed error in displaying playlist video details.
 
- -- Stuart Howarth <showarth@cutetubte.co.uk>  Fri, 04 Nov 2011 07:12:41 +0000
+ -- Stuart Howarth <showarth@cutetubte.co.uk>  Sat, 05 Nov 2011 18:00:41 +0000

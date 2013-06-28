@@ -106,6 +106,28 @@ Page {
 
             Row {
                 x: 10
+                spacing: 10
+
+                Label {
+                    width: col1.width - 30 - lockVideosSwitch.width
+                    height: lockVideosSwitch.height
+                    color: _TEXT_COLOR
+                    wrapMode: Text.WordWrap
+                    verticalAlignment: Text.AlignVCenter
+                    font.bold: true
+                    text: qsTr("Lock screen to landscape when viewing videos")
+                }
+
+                MySwitch {
+                    id: lockVideosSwitch
+
+                    Component.onCompleted: checked = Settings.lockVideosToLandscape
+                    onCheckedChanged: Settings.lockVideosToLandscape = checked
+                }
+            }
+
+            Row {
+                x: 10
                 spacing: parent.width - (children[0].width + children[1].width + 20)
 
                 Label {

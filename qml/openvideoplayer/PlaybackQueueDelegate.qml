@@ -25,7 +25,7 @@ Item {
         verticalAlignment: Text.AlignVCenter
         font.bold: true
         color: index == nowPlayingPage.playlistPosition ? Settings.activeColor : _TEXT_COLOR
-        text: title
+        text: fileName.slice(0, fileName.lastIndexOf("."))
     }
 
     Label {

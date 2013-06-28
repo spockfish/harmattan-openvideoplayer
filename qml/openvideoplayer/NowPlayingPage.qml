@@ -38,7 +38,7 @@ Page {
             video.item = currentVideo.itemId;
         }
         else {
-            videoModel.getVideo(currentVideo.url);
+            videoModel.getVideo(currentVideo.filePath);
         }
         if (Settings.enableSubtitles) {
             getSubtitles();
@@ -112,12 +112,12 @@ Page {
         subsChecker.sendMessage({"position": videoPlayer.position, "subtitles": currentVideo.subtitles})
     }
 
-    orientationLock: appWindow.pageStack.currentPage == videoPlaybackPage ? PageOrientation.Automatic
-                                                                          : (Settings.screenOrientation == "landscape")
-                                                                            ? PageOrientation.LockLandscape
-                                                                            : (Settings.screenOrientation == "portrait")
-                                                                              ? PageOrientation.LockPortrait
-                                                                              : PageOrientation.Automatic
+    orientationLock: (appWindow.pageStack.currentPage == videoPlaybackPage) && (!Settings.lockVideosToLandscape) ? PageOrientation.Automatic
+                     : (Settings.screenOrientation == "landscape") || ((appWindow.pageStack.currentPage == videoPlaybackPage) && (Settings.lockVideosToLandscape))
+                     ? PageOrientation.LockLandscape
+                     : (Settings.screenOrientation == "portrait")
+                       ? PageOrientation.LockPortrait
+                       : PageOrientation.Automatic
 
     WorkerScript {
         id: subsGetter
@@ -449,24 +449,24 @@ Page {
             var mb = Math.abs(video.metaData.fileSize / 1000000).toString();
             return mb.slice(0, mb.indexOf(".") + 2) + "MB";
         }
-        properties: ["title", "duration", "fileSize", "fileExtension", "playCount", "lastModified", "url", "resumePosition"]
+        properties: ["title", "fileName", "duration", "fileSize", "fileExtension", "playCount", "lastModified", "url", "resumePosition"]
     }
 
     DocumentGalleryModel {
         id: videoModel
 
-        function getVideo(url) {
-            videoFilter.value = url;
+        function getVideo(filePath) {
+            videoFilter.value = filePath;
         }
 
         rootType: DocumentGallery.Video
         filter: GalleryEqualsFilter {
             id: videoFilter
 
-            property: "url"
+            property: "filePath"
             value: ""
         }
-        onStatusChanged: if ((videoModel.status == DocumentGalleryModel.Finished) && (videoModel.count == 1)) video.item = videoModel.get(0).itemId;
+        onStatusChanged: if ((videoModel.status == DocumentGalleryModel.Finished) && (videoModel.count > 0)) video.item = videoModel.get(0).itemId;
     }
 
     Flickable {
@@ -503,7 +503,7 @@ Page {
                 font.pixelSize: 32
                 color: _TEXT_COLOR
                 wrapMode: Text.WordWrap
-                text: video.available ? video.metaData.title : ""
+                text: video.available ? video.metaData.fileName.slice(0, video.metaData.fileName.lastIndexOf(".")) : ""
             }
 
             Column {

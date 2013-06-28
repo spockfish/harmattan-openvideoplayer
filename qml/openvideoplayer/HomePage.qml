@@ -231,9 +231,9 @@ Page {
                         negated: true
                     },
 
-                    GalleryContainsFilter {
-                        property: "filePath"
-                        value: "DCIM"
+                    GalleryEqualsFilter {
+                        property: "path"
+                        value: "/home/user/MyDocs/DCIM"
                         negated: true
                     },
 
@@ -251,6 +251,7 @@ Page {
 
             width: videoList.cellWidth
             height: videoList.cellHeight
+            useMarqueeText: appWindow.pageStack.currentPage == homePage
             onClicked: playVideos([ObjectCreator.cloneVideoObject(videoListModel.get(index))])
             onPressAndHold: {
                 videoList.selectedIndex = index;

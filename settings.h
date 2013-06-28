@@ -23,6 +23,10 @@ class Settings : public QSettings
                READ getVideoSkipLength
                WRITE setVideoSkipLength
                NOTIFY videoSkipLengthChanged)
+    Q_PROPERTY(bool lockVideosToLandscape
+               READ getLockVideosToLandscape
+               WRITE setLockVideosToLandscape
+               NOTIFY lockVideosToLandscapeChanged)
     Q_PROPERTY(QString thumbnailSize
                READ getThumbnailSize
                WRITE setThumbnailSize
@@ -47,6 +51,10 @@ class Settings : public QSettings
                READ getActiveColorString
                WRITE setActiveColorString
                NOTIFY activeColorStringChanged)
+    Q_PROPERTY(bool enableMarqueeText
+               READ getEnableMarqueeText
+               WRITE setEnableMarqueeText
+               NOTIFY enableMarqueeTextChanged)
     Q_PROPERTY(bool enableSubtitles
                READ getEnableSubtitles
                WRITE setEnableSubtitles
@@ -70,6 +78,7 @@ public:
     bool getPauseWhenMinimized() { return pauseWhenMinimized; }
     bool getPlayInBackground() { return playInBackground; }
     int getVideoSkipLength() { return videoSkipLength; }
+    bool getLockVideosToLandscape() { return lockVideosToLandscape; }
     QString getThumbnailSize() const { return thumbnailSize; }
     QString getTheme() const { return theme; }
     QString getLanguage() const { return language; }
@@ -80,12 +89,14 @@ public:
     int getSubtitlesSize() { return subtitlesSize; }
     QString getSubtitlesColor() const { return subtitlesColor; }
     bool getBoldSubtitles() { return boldSubtitles; }
+    bool getEnableMarqueeText() { return enableMarqueeText; }
 
 signals:
     void playPositionChanged();
     void pauseWhenMinimizedChanged();
     void playInBackgroundChanged();
     void videoSkipLengthChanged();
+    void lockVideosToLandscapeChanged();
     void thumbnailSizeChanged();
     void themeChanged();
     void languageChanged();
@@ -97,6 +108,7 @@ signals:
     void subtitlesSizeChanged();
     void subtitlesColorChanged();
     void boldSubtitlesChanged();
+    void enableMarqueeTextChanged();
 
 public slots:
     void saveSettings();
@@ -105,6 +117,7 @@ public slots:
     void setPauseWhenMinimized(bool pause);
     void setPlayInBackground(bool play);
     void setVideoSkipLength(int length);
+    void setLockVideosToLandscape(bool lock);
     void setThumbnailSize(const QString &size);
     void setTheme(const QString &aTheme);
     void setActiveColor(const QString &color);
@@ -115,12 +128,14 @@ public slots:
     void setSubtitlesSize(int size);
     void setSubtitlesColor(const QString &color);
     void setBoldSubtitles(bool bold);
+    void setEnableMarqueeText(bool enable);
 
 private:
     QString playPosition;
     bool pauseWhenMinimized;
     bool playInBackground;
     int videoSkipLength;
+    bool lockVideosToLandscape;
     QString thumbnailSize;
     QString theme;
     QString activeColor;
@@ -131,6 +146,7 @@ private:
     int subtitlesSize;
     QString subtitlesColor;
     bool boldSubtitles;
+    bool enableMarqueeText;
 };
 
 #endif // SETTINGS_H

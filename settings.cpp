@@ -9,9 +9,10 @@ Settings::Settings(QSettings *parent) :
 void Settings::restoreSettings() {
     beginGroup("Media");
     setPlayPosition(value("playPosition", "start").toString());
-    setPauseWhenMinimized(value("pauseWhenMinimized", false).toBool());
+    setPauseWhenMinimized(value("pauseWhenMinimized", true).toBool());
     setPlayInBackground(value("playInBackground", true).toBool());
     setVideoSkipLength(value("videoSkipLength", 30000).toInt());
+    setLockVideosToLandscape(value("lockVideosToLandscape", false).toBool());
     setEnableSubtitles(value("enableSubtitles", false).toBool());
     setSubtitlesSize(value("subtitlesSize", 32).toInt());
     setSubtitlesColor(value("subtitlesColor", "#ffffff").toString());
@@ -24,6 +25,7 @@ void Settings::restoreSettings() {
     setActiveColorString(value("activeColorString", "color12").toString());
     setLanguage(value("language", "en").toString());
     setThumbnailSize(value("thumbnailSize", "large").toString());
+    setEnableMarqueeText(value("enableMarqueeText", false).toBool());
     endGroup();
 
     beginGroup("System");
@@ -37,6 +39,7 @@ void Settings::saveSettings() {
     setValue("pauseWhenMinimized", pauseWhenMinimized);
     setValue("playInBackground", playInBackground);
     setValue("videoSkipLength", videoSkipLength);
+    setValue("lockVideosToLandscape", lockVideosToLandscape);
     setValue("enableSubtitles", enableSubtitles);
     setValue("subtitlesSize", subtitlesSize);
     setValue("subtitlesColor", subtitlesColor);
@@ -49,6 +52,7 @@ void Settings::saveSettings() {
     setValue("activeColorString", activeColorString);
     setValue("language", language);
     setValue("thumbnailSize", thumbnailSize);
+    setValue("enableMarqueeText", enableMarqueeText);
     endGroup();
 
     beginGroup("System");
@@ -74,6 +78,11 @@ void Settings::setPlayInBackground(bool play) {
 void Settings::setVideoSkipLength(int length) {
     videoSkipLength = length;
     emit videoSkipLengthChanged();
+}
+
+void Settings::setLockVideosToLandscape(bool lock) {
+    lockVideosToLandscape = lock;
+    emit lockVideosToLandscapeChanged();
 }
 
 void Settings::setThumbnailSize(const QString &size) {
@@ -124,4 +133,9 @@ void Settings::setSubtitlesColor(const QString &color) {
 void Settings::setBoldSubtitles(bool bold) {
     boldSubtitles = bold;
     emit boldSubtitlesChanged();
+}
+
+void Settings::setEnableMarqueeText(bool enable) {
+    enableMarqueeText = enable;
+    emit enableMarqueeTextChanged();
 }
