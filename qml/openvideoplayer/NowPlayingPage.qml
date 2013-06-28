@@ -34,6 +34,10 @@ Page {
     }
 
     function startPlayback() {
+        video.item = currentVideo.itemId;
+        if (Settings.enableSubtitles) {
+            getSubtitles();
+        }
         videoPlayer.stop();
         videoPlayer.source = "";
         archivePlaybackTimer.restart();
@@ -87,6 +91,34 @@ Page {
         appWindow.pageStack.push(detailsPage);
     }
 
+    function getSubtitles() {
+        var subtitles = Utils.getSubtitles(currentVideo.filePath);
+        if (subtitles.length > 0) {
+            var cv = currentVideo;
+            cv["subtitles"] = subtitles;
+            currentVideo = cv;
+        }
+    }
+
+    function checkSubtitles() {
+        if (currentVideo.subtitles) {
+            var found = false;
+            var i = 0;
+            var sub;
+            while ((!found) && (i < currentVideo.subtitles.length)) {
+                sub = currentVideo.subtitles[i];
+                if ((videoPlayer.position >= sub.start) && (videoPlayer.position <= sub.end)) {
+                    subtitlesText.text = sub.text;
+                    found = true;
+                }
+                i++;
+            }
+            if (!found) {
+                subtitlesText.text = "";
+            }
+        }
+    }
+
     orientationLock: appWindow.pageStack.currentPage == videoPlaybackPage ? PageOrientation.Automatic
                                                                           : (Settings.screenOrientation == "landscape")
                                                                             ? PageOrientation.LockLandscape
@@ -94,7 +126,6 @@ Page {
                                                                               ? PageOrientation.LockPortrait
                                                                               : PageOrientation.Automatic
 
-    onCurrentVideoChanged: if (currentVideo.itemId) video.item = currentVideo.itemId;
 
     SelectionDialog {
         id: queueDialog
@@ -298,6 +329,7 @@ Page {
         fillMode: Video.PreserveAspectFit
         anchors { centerIn: parent; verticalCenterOffset: appWindow.inPortrait ? -130 : 0 }
         paused: ((platformWindow.viewMode == WindowState.Thumbnail) && (Settings.pauseWhenMinimized) && (videoPlayer.playing)) || ((!Settings.playInBackground) && (appWindow.pageStack.currentPage != videoPlaybackPage) && (videoPlayer.playing)) || (videoPlayer.setToPaused)
+        onPositionChanged: checkSubtitles()
         onError: {
             if (error != Video.NoError) {
                 if (error == Video.NetworkError) {
@@ -363,6 +395,20 @@ Page {
             anchors.centerIn: parent
             source: videoMouseArea.pressed ? "images/play-button-" + Settings.activeColorString + ".png" : "images/play-button.png"
             visible: (videoPlayer.paused) && (!busyIndicator.visible)
+        }
+
+        Label {
+            id: subtitlesText
+
+            z: 100
+            anchors { fill: parent; margins: appWindow.inPortrait ? 10 : 50 }
+            wrapMode: Text.WordWrap
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignBottom
+            font.pixelSize: Settings.subtitlesSize
+            font.bold: Settings.boldSubtitles
+            color: Settings.subtitlesColor
+            visible: (Settings.enableSubtitles) && (currentVideo.subtitles) ? true : false
         }
 
         MouseArea {

@@ -47,6 +47,22 @@ class Settings : public QSettings
                READ getActiveColorString
                WRITE setActiveColorString
                NOTIFY activeColorStringChanged)
+    Q_PROPERTY(bool enableSubtitles
+               READ getEnableSubtitles
+               WRITE setEnableSubtitles
+               NOTIFY enableSubtitlesChanged)
+    Q_PROPERTY(int subtitlesSize
+               READ getSubtitlesSize
+               WRITE setSubtitlesSize
+               NOTIFY subtitlesSizeChanged)
+    Q_PROPERTY(QString subtitlesColor
+               READ getSubtitlesColor
+               WRITE setSubtitlesColor
+               NOTIFY subtitlesColorChanged)
+    Q_PROPERTY(bool boldSubtitles
+               READ getBoldSubtitles
+               WRITE setBoldSubtitles
+               NOTIFY boldSubtitlesChanged)
 
 public:
     explicit Settings(QSettings *parent = 0);
@@ -60,6 +76,10 @@ public:
     QString getOrientation() const { return screenOrientation; }
     QString getActiveColor() const { return activeColor; }
     QString getActiveColorString() const { return activeColorString; }
+    bool getEnableSubtitles() { return enableSubtitles; }
+    int getSubtitlesSize() { return subtitlesSize; }
+    QString getSubtitlesColor() const { return subtitlesColor; }
+    bool getBoldSubtitles() { return boldSubtitles; }
 
 signals:
     void playPositionChanged();
@@ -73,6 +93,10 @@ signals:
     void alert(const QString &message);
     void activeColorChanged();
     void activeColorStringChanged();
+    void enableSubtitlesChanged();
+    void subtitlesSizeChanged();
+    void subtitlesColorChanged();
+    void boldSubtitlesChanged();
 
 public slots:
     void saveSettings();
@@ -87,6 +111,10 @@ public slots:
     void setActiveColorString(const QString &colorString);
     void setLanguage(const QString &lang);
     void setOrientation(const QString &orientation);
+    void setEnableSubtitles(bool enable);
+    void setSubtitlesSize(int size);
+    void setSubtitlesColor(const QString &color);
+    void setBoldSubtitles(bool bold);
 
 private:
     QString playPosition;
@@ -99,6 +127,10 @@ private:
     QString activeColorString;
     QString language;
     QString screenOrientation;
+    bool enableSubtitles;
+    int subtitlesSize;
+    QString subtitlesColor;
+    bool boldSubtitles;
 };
 
 #endif // SETTINGS_H

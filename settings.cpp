@@ -12,6 +12,10 @@ void Settings::restoreSettings() {
     setPauseWhenMinimized(value("pauseWhenMinimized", false).toBool());
     setPlayInBackground(value("playInBackground", true).toBool());
     setVideoSkipLength(value("videoSkipLength", 30000).toInt());
+    setEnableSubtitles(value("enableSubtitles", false).toBool());
+    setSubtitlesSize(value("subtitlesSize", 32).toInt());
+    setSubtitlesColor(value("subtitlesColor", "#ffffff").toString());
+    setBoldSubtitles(value("boldSubtitles", false).toBool());
     endGroup();
 
     beginGroup("Appearance");
@@ -33,6 +37,10 @@ void Settings::saveSettings() {
     setValue("pauseWhenMinimized", pauseWhenMinimized);
     setValue("playInBackground", playInBackground);
     setValue("videoSkipLength", videoSkipLength);
+    setValue("enableSubtitles", enableSubtitles);
+    setValue("subtitlesSize", subtitlesSize);
+    setValue("subtitlesColor", subtitlesColor);
+    setValue("boldSubtitles", boldSubtitles);
     endGroup();
 
     beginGroup("Appearance");
@@ -96,4 +104,24 @@ void Settings::setLanguage(const QString &lang) {
 void Settings::setOrientation(const QString &orientation) {
     screenOrientation = orientation;
     emit orientationChanged();
+}
+
+void Settings::setEnableSubtitles(bool enable) {
+    enableSubtitles = enable;
+    emit enableSubtitlesChanged();
+}
+
+void Settings::setSubtitlesSize(int size) {
+    subtitlesSize = size;
+    emit subtitlesSizeChanged();
+}
+
+void Settings::setSubtitlesColor(const QString &color) {
+    subtitlesColor = color;
+    emit subtitlesColorChanged();
+}
+
+void Settings::setBoldSubtitles(bool bold) {
+    boldSubtitles = bold;
+    emit boldSubtitlesChanged();
 }

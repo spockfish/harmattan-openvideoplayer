@@ -1,17 +1,13 @@
-This package was debianized by Stuart Howarth <stuart@unknown> on
-Sun, 30 Oct 2011 15:12:41 +0000.
-
-It was downloaded from <url://example.com>
+This package was debianized by Stuart Howarth <showarth@cutetube.co.uk> on
+Wed, 02 Nov 2011 15:12:41 +0000.
 
 Upstream Author(s):
 
-    <put author's name and email here>
-    <likewise for another author>
+    <Stuart Howarth showarth@cutetube.co.uk>
 
 Copyright:
 
-    <Copyright (C) YYYY Name OfAuthor>
-    <likewise for another author>
+    <Copyright (C) 2011 Stuart Howarth>
 
 License:
 
@@ -32,7 +28,7 @@ License:
 On Debian systems, the complete text of the GNU General
 Public License can be found in `/usr/share/common-licenses/GPL'.
 
-The Debian packaging is (C) 2011, Stuart Howarth <stuart@unknown> and
+The Debian packaging is (C) 2011, Stuart Howarth <showarth@cutetube.co.uk> and
 is licensed under the GPL, see above.
 
 

@@ -25,7 +25,7 @@ Page {
 
         anchors { fill: parent; topMargin: 10 }
         contentWidth: width
-        contentHeight: col1.height
+        contentHeight: col1.height + 20
         flickableDirection: Flickable.VerticalFlick
         clip: true
 
@@ -81,11 +81,7 @@ Page {
                 }
 
                 MySwitch {
-                    id: backgroundSwitch
-
-                    Component.onCompleted: {
-                        checked = Settings.playInBackground
-                    }
+                    Component.onCompleted: checked = Settings.playInBackground
                     onCheckedChanged: Settings.playInBackground = checked
                 }
             }
@@ -103,12 +99,108 @@ Page {
                 }
 
                 MySwitch {
-                    id: pauseSwitch
-
-                    Component.onCompleted: {
-                        checked = Settings.pauseWhenMinimized
-                    }
+                    Component.onCompleted: checked = Settings.pauseWhenMinimized
                     onCheckedChanged: Settings.pauseWhenMinimized = checked
+                }
+            }
+
+            Row {
+                x: 10
+                spacing: parent.width - (children[0].width + children[1].width + 20)
+
+                Label {
+                    height: 30
+                    color: _TEXT_COLOR
+                    verticalAlignment: Text.AlignBottom
+                    font.bold: true
+                    text: qsTr("Enable subtitles")
+                }
+
+                MySwitch {
+                    Component.onCompleted: checked = Settings.enableSubtitles
+                    onCheckedChanged: Settings.enableSubtitles = checked
+                }
+            }
+
+            Column {
+                id: subsColumn
+
+                width: parent.width
+                spacing: 20
+                visible: Settings.enableSubtitles
+                opacity: visible ? 1 : 0
+
+                Behavior on opacity { PropertyAnimation { duration: 300 } }
+
+                Row {
+                    x: 10
+                    spacing: parent.width - (children[0].width + children[1].width + 20)
+
+                    Label {
+                        height: 30
+                        color: _TEXT_COLOR
+                        verticalAlignment: Text.AlignBottom
+                        font.bold: true
+                        text: qsTr("Subtitles font size")
+                    }
+
+                    MyTextField {
+                        id: subsizeText
+
+                        width: 66
+                        onTextChanged: Settings.subtitlesSize = parseInt(text)
+                        inputMethodHints: Qt.ImhNoPredictiveText | Qt.ImhDigitsOnly
+                        platformSipAttributes: SipAttributes {
+                            actionKeyEnabled: subsizeText.text != ""
+                            actionKeyHighlighted: true
+                            actionKeyLabel: qsTr("Done")
+                            actionKeyIcon: ""
+                        }
+                        Keys.onEnterPressed: platformCloseSoftwareInputPanel()
+                        Keys.onReturnPressed: platformCloseSoftwareInputPanel()
+
+                        Component.onCompleted: subsizeText.text = Settings.subtitlesSize
+                    }
+                }
+
+                Label {
+                    x: 10
+                    font.bold: true
+                    color: _TEXT_COLOR
+                    text: qsTr("Subtitles color")
+                }
+
+                Flow {
+                    x: 10
+                    width: parent.width - 20
+                    spacing: 10
+
+                    Repeater {
+                        model: ["#ffffff", "#000000", "#66b907", "#418b11", "#37790c",
+                            "#346905", "#0fa9cd","#0881cb", "#066bbe", "#2054b1",
+                            "#6705bd", "#8a12bc","#cd0fbc", "#e805a3", "#ef5906",
+                            "#ea6910", "#f7751e", "#ff8806", "#ed970c", "#f2b317"]
+
+                        Rectangle {
+                            width: 50
+                            height: 50
+                            color: modelData
+                            border.color: (Settings.subtitlesColor == "#ffffff") || (!theme.inverted) ? "#4d4d4d" : "#ffffff"
+                            border.width: color == Settings.subtitlesColor ? 2 : 0
+
+                            MouseArea {
+                                anchors.fill: parent
+                                onClicked: Settings.subtitlesColor = parent.color
+                            }
+                        }
+                    }
+                }
+
+                MyCheckBox {
+                    x: 10
+                    text: qsTr("Use bold font for subtitles?")
+                    Component.onCompleted: checked = Settings.boldSubtitles
+                    onClicked: Settings.boldSubtitles = checked
                 }
             }
         }
